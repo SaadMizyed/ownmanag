@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>جمعية PCRF - نظام إدارة العُهد والممتلكات (أوفلاين)</title>
+  <style>
+    /* === RESET & VARIABLES === */
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --secondary: #0f172a;
+      --accent: #16a34a;
+      --warning: #f59e0b;
+      --danger: #e11d48;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      direction: rtl;
+    }
+
+    /* === LAYOUT & RESPONSIVE NAV === */
+    .app-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    aside {
+      width: 260px;
+      background-color: var(--secondary);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+      z-index: 30;
+    }
+
+    .brand {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: var(--primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    nav {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-align: right;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .nav-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .badge {
+      margin-right: auto;
+      background: var(--warning);
+      color: var(--secondary);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .user-footer {
+      padding: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0,0,0,0.2);
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #38bdf8;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* === MAIN CONTENT AREA === */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    header {
+      height: 64px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .content-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* === CARDS & TABLES === */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .kpi-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    /* === FORMS & INPUTS === */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 44px; /* Mobile touch friendly */
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-success { background: var(--accent); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-warning { background: var(--warning); color: var(--secondary); }
+    .btn-secondary { background: #e2e8f0; color: var(--text); }
+
+    /* === TABLE RESPONSIVENESS FOR MOBILE === */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: #f1f5f9;
+      padding: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background: #f8fafc; }
+
+    .status-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+    .status-available { background: #dcfce7; color: #15803d; }
+    .status-inuse { background: #e0f2fe; color: #0369a1; }
+    .status-pending { background: #fef3c7; color: #b45309; }
+    .status-returned { background: #f1f5f9; color: #475569; }
+
+    /* === MODAL STYLES === */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: #fff;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 500px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Lock Modal (Non-closable) */
+    .lock-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    /* === PRINTABLE DOCUMENTS STYLES === */
+    #printableArea {
+      display: none;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea {
+        display: block !important;
+        position: absolute;
+        left: 0; top: 0; width: 100%;
+        background: #fff;
+        padding: 30px;
+        color: #000;
+        font-size: 12pt;
+      }
+      .print-header {
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+      }
+      .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .print-table th, .print-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: right;
+      }
+      .sig-box-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 50px;
+        page-break-inside: avoid;
+      }
+      .sig-box {
+        width: 45%;
+        border: 1px dashed #000;
+        padding: 15px;
+        text-align: center;
+        min-height: 120px;
+      }
+      .fingerprint-box {
+        width: 80px;
+        height: 100px;
+        border: 1px solid #000;
+        margin: 10px auto;
+      }
+    }
+
+    /* === MOBILE BREAKPOINTS === */
+    @media (max-width: 768px) {
+      aside {
+        position: fixed;
+        top: 0; bottom: 0; right: 0;
+        transform: translateX(100%);
+      }
+      aside.open {
+        transform: translateX(0);
+      }
+      .menu-toggle { display: block; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">PCRF</div>
+      <div>
+        <div class="brand-title">إغاثة أطفال فلسطين</div>
+        <div class="brand-subtitle">نظام إدارة العُهد والممتلكات</div>
+      </div>
+    </div>
+
+    <nav>
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>لوحة التحكم</span>
+      </button>
+      <button onclick="switchTab('assets')" id="nav-assets" class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 5h16v11H4V5z"/></svg>
+        <span>تعريف الأصول</span>
+      </button>
+      <button onclick="switchTab('issuance')" id="nav-issuance" class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        <span>طلب تسليم عهدة</span>
+      </button>
+      <button onclick="switchTab('approvals')" id="nav-approvals" class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span>الاعتماد والتوقيع الورقي</span>
+        <span id="pendingBadge" class="badge">0</span>
+      </button>
+      <button onclick="switchTab('tracking')" id="nav-tracking" class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+        <span>سجل وتتبع العُهد</span>
+      </button>
+      <button onclick="switchTab('returns')" id="nav-returns" class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-0.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+        <span>الإرجاع وإخلاء الطرف</span>
+      </button>
+      <button onclick="switchTab('subscription')" id="nav-subscription" class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8s0 0 0 0z"/></svg>
+        <span>الاشتراك</span>
+        <span id="subStatusBadge" class="badge" style="background:var(--accent); color:#fff; display:none;">مفعل</span>
+      </button>
+    </nav>
+
+    <div class="user-footer">
+      <div class="avatar">م</div>
+      <div>
+        <div style="font-size: 0.85rem; font-weight:700;">مسؤول المستودع</div>
+        <div style="font-size: 0.7rem; color: #94a3b8;">جمعية PCRF - غزة/الضفة</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <main>
+    <header>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text)"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
+        <h2 id="pageTitle" class="header-title">لوحة التحكم</h2>
+      </div>
+    </header>
+
+    <div class="content-body">
+
+      <!-- SECTION 1: DASHBOARD -->
+      <section id="tab-dashboard">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div>
+              <div style="color: var(--text-muted); font-size:0.85rem;">إجمالي الأصول</div>
+              <div id="statTotal" class="kpi-value">0</div>
+            </div>
+            <svg width="36" height="36" fill="var(--primary)" viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2H0v2h24v-2h-4z"/></svg>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div style="color: var(--text-muted); font-size:0.85rem;">قيد الاستخدام</div>
+              <div id="statInUse" class="kpi-value" style="color: var(--primary);">0</div>
+            </div>
+            <svg width="36" height="36" fill="var(--primary)" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div style="color: var(--text-muted); font-size:0.85rem;">المتاحة بالمستودع</div>
+              <div id="statAvailable" class="kpi-value" style="color: var(--accent);">0</div>
+            </div>
+            <svg width="36" height="36" fill="var(--accent)" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V8h16v10z"/></svg>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div style="color: var(--text-muted); font-size:0.85rem;">طلبات بانتظار الاعتماد</div>
+              <div id="statPending" class="kpi-value" style="color: var(--warning);">0</div>
+            </div>
+            <svg width="36" height="36" fill="var(--warning)" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">أحدث عمليات وتسليمات العُهد</span>
+            <button onclick="switchTab('tracking')" class="btn btn-secondary" style="font-size:0.75rem; min-height:auto; padding:4px 8px;">عرض الكل</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم الأصل</th>
+                  <th>المستلم</th>
+                  <th>القسم / مشروع PCRF</th>
+                  <th>تاريخ التسليم</th>
+                  <th>حالة العهدة</th>
+                </tr>
+              </thead>
+              <tbody id="dashTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: ASSETS MANAGEMENT -->
+      <section id="tab-assets" style="display: none;">
+        <div class="card">
+          <span class="card-title" style="display:block; margin-bottom:16px;">تعريف أصل / معدات طبية / أجهزة جديدة</span>
+          <form onsubmit="handleCreateAsset(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>اسم الأصل / الجهاز *</label>
+                <input type="text" id="assetName" required placeholder="مثال: لابتوب Lenovo ThinkPad" class="form-control">
+              </div>
+
+              <!-- حقل الرقم التسلسلي مع زر مسح الباركود -->
+              <div class="form-group">
+                <label>الرقم التسلسلي (Serial No) *</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" id="assetSerial" required placeholder="SN-PCRF-9901" class="form-control">
+                  <button type="button" onclick="openBarcodeScanner()" class="btn btn-secondary" style="padding: 0 12px; flex-shrink: 0;" title="مسح الباركود للكاميرا">
+                    📷 مسح
+                  </button>
+                </div>
+              </div>
+
+              <!-- حقل الموديل / الفئة اختياري -->
+              <div class="form-group">
+                <label>الموديل / الفئة</label>
+                <input type="text" id="assetModel" placeholder="المكتب الرئيسي / مشروع غزة" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label>الحالة التشغيلية *</label>
+                <select id="assetCondition" class="form-control">
+                  <option value="جديدة">جديدة (New)</option>
+                  <option value="ممتازة">مستعملة - حالة ممتازة</option>
+                  <option value="جيدة">مستعملة - حالة جيدة</option>
+                </select>
+              </div>
+
+              <!-- تغيير العملة للشيكل (₪) -->
+              <div class="form-group">
+                <label>القيمة التقديرية (₪) *</label>
+                <input type="number" id="assetValue" required placeholder="1200" class="form-control">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:12px;">حفظ الأصل بالمستودع</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <span class="card-title" style="display:block; margin-bottom:16px;">قائمة الأصول المعرفة في الجمعية</span>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>الأصل</th>
+                  <th>الرقم التسلسلي</th>
+                  <th>القيمة</th>
+                  <th>حالة الأصل</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="assetsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: ISSUANCE REQUEST -->
+      <section id="tab-issuance" style="display: none;">
+        <div class="card" style="max-width: 700px; margin: 0 auto;">
+          <span class="card-title" style="display:block; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:8px;">إنشاء أمر تسليم عهدة موظف</span>
+          <form onsubmit="handleCreateIssuance(event)">
+            <div class="form-group">
+              <label>اختر الأصل المتاح تسليمه *</label>
+              <select id="issuanceAsset" required class="form-control"></select>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>اسم الموظف المستلم *</label>
+                <input type="text" id="empName" required placeholder="مثال: د. طارق علي" class="form-control">
+              </div>
+
+              <!-- حقل الرقم الوظيفي أصبح اختيارياً بدون نجمة وبدون required -->
+              <div class="form-group">
+                <label>الرقم الوظيفي</label>
+                <input type="text" id="empId" placeholder="PCRF-504 (اختياري)" class="form-control">
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>القسم / المشروع *</label>
+                <input type="text" id="empDept" required placeholder="قسم الإغاثة الطبية" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>موقع / مكان الاستخدام *</label>
+                <input type="text" id="useLocation" required placeholder="مستشفى الشفاء / الميداني" class="form-control">
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>تاريخ التسليم *</label>
+                <input type="date" id="issueDate" required class="form-control">
+              </div>
+              <div class="form-group">
+                <label>ملاحظات العهدة</label>
+                <input type="text" id="issueNotes" placeholder="شاحن + شنطة أصلية" class="form-control">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:16px;">إرسال للتحضير والاعتماد الورقي</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- SECTION 4: APPROVALS & PRINT HANDOVER -->
+      <section id="tab-approvals" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">طلبات التسليم بانتظار الطباعة والتوقيع اليدوي</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
+            تعليمات: قم بطباعة نموذج التسليم ليتم توقيعه وبصمه يدويًا من الموظف المستلم، ثم اضغط على "تأكيد الاعتماد (تم التوقيع يدويًا)".
+          </p>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم الأصل</th>
+                  <th>الموظف المستلم</th>
+                  <th>القسم</th>
+                  <th>تاريخ التسليم</th>
+                  <th>الإجراءات الورقية</th>
+                </tr>
+              </thead>
+              <tbody id="approvalsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: TRACKING -->
+      <section id="tab-tracking" style="display: none;">
+        <div class="card">
+          <div class="card-header" style="flex-wrap:wrap; gap:12px;">
+            <input type="text" id="searchInput" oninput="renderTrackingTable()" placeholder="بحث باسم الموظف، الأصل، أو الرقم التسلسلي..." class="form-control" style="max-width:300px;">
+            <select id="statusFilter" onchange="renderTrackingTable()" class="form-control" style="max-width:200px;">
+              <option value="all">جميع الحالات</option>
+              <option value="تم الاعتماد والتوقيع">قيد الاستخدام (معارة)</option>
+              <option value="بانتظار الموافقة">بانتظار التوقيع الورقي</option>
+              <option value="تم الإرجاع">مُرجعة (منتهية)</option>
+            </select>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم الأصل</th>
+                  <th>الرقم التسلسلي</th>
+                  <th>المستلم</th>
+                  <th>القسم</th>
+                  <th>تاريخ الاستلام</th>
+                  <th>حالة العهدة</th>
+                  <th>نوع التوقيع</th>
+                </tr>
+              </thead>
+              <tbody id="trackingTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: RETURNS & CLEARANCE -->
+      <section id="tab-returns" style="display: none;">
+        <div class="card" style="max-width:650px; margin: 0 auto;">
+          <span class="card-title" style="display:block; margin-bottom:16px;">إرجاع عهدة وإصدار شهادة إخلاء طرف PCRF</span>
+          <form onsubmit="handleReturnSubmit(event)">
+            <div class="form-group">
+              <label>اختر العهدة المراد إرجاعها *</label>
+              <select id="returnCustodySelect" required class="form-control"></select>
+            </div>
+            <div class="form-group">
+              <label>حالة الأصل عند الفحص والاستلام *</label>
+              <select id="returnCondition" class="form-control">
+                <option value="سليمة وخالية من الأضرار">سليمة وخالية من الأضرار</option>
+                <option value="استهلاك طبيعي (أضرار بسيطة)">استهلاك طبيعي (أضرار بسيطة)</option>
+                <option value="تالفة وتحتاج صيانة">تالفة وتحتاج صيانة</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ملاحظات الإرجاع والفحص</label>
+              <input type="text" id="returnNotes" placeholder="تم استلام جميع الملحقات بحالة جيدة" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success" style="width:100%; margin-top:12px;">تسجيل الإرجاع وإصدار شهادة الإخلاء</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- SECTION 7: SUBSCRIPTION & ACTIVATION (قسم الاشتراك الجديد) -->
+      <section id="tab-subscription" style="display: none;">
+        <div class="card" style="max-width: 650px; margin: 0 auto;">
+          <div class="card-header">
+            <span class="card-title">حالة الاشتراك والتفعيل</span>
+          </div>
+
+          <div id="trialTimerBox" style="background: #f1f5f9; padding: 16px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+            <!-- يتم تحديث العداد أو حالة التفعيل ديناميكياً -->
+          </div>
+
+          <div class="form-group">
+            <label>معرّف الجهاز الخاص بك (Device ID)</label>
+            <div id="displayDeviceId" style="font-family: monospace; font-size: 1.1rem; font-weight: bold; background: #e2e8f0; padding: 10px; border-radius: 8px; text-align: center; letter-spacing: 1px;">
+              ...
+            </div>
+            <span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">هذا المعرف فريد وثابت لجهازك ويستخدم لتوليد كود التفعيل الخاص بك.</span>
+          </div>
+
+          <div class="form-group" style="margin-top: 16px;">
+            <label>رقم هاتفك للتواصل</label>
+            <input type="tel" id="subPhone" placeholder="مثال: 0592000000" class="form-control">
+          </div>
+
+          <button type="button" onclick="requestActivationCode('subPhone')" class="btn btn-success" style="width:100%; margin-top:8px;">
+            📱 طلب كود التفعيل عبر واتساب المهندس سعد
+          </button>
+
+          <hr style="margin: 20px 0; border: none; border-top: 1px dashed var(--border);">
+
+          <div class="form-group">
+            <label>إدخال كود التفعيل</label>
+            <input type="text" id="subCode" placeholder="أدخل كود التفعيل الذي استلمته هنا" class="form-control" style="font-family: monospace; letter-spacing: 1px;">
+          </div>
+
+          <button type="button" onclick="handleActivateApp('subCode')" class="btn btn-primary" style="width:100%; margin-top:8px;">
+            🔑 تفعيل التطبيق
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- PRINT CONTAINER (Hidden in Web view, Visible only in Print view) -->
+<div id="printableArea"></div>
+
+<!-- BARCODE CAMERA SCANNER MODAL -->
+<div id="scannerModal" class="modal-overlay">
+  <div class="modal-box" style="text-align: center;">
+    <h3 style="margin-bottom: 12px; color: var(--primary);">مسح الباركود باستخدام الكاميرا</h3>
+    <div style="position: relative; width: 100%; height: 260px; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 12px;">
+      <video id="barcodeVideo" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline></video>
+      <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 2px; background: red; box-shadow: 0 0 8px red; transform: translateY(-50%);"></div>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">وجه كاميرا الهاتف نحو الباركود بشكل مباشر</p>
+    <button type="button" onclick="closeBarcodeScanner()" class="btn btn-secondary" style="width: 100%;">إلغاء</button>
+  </div>
+</div>
+
+<!-- CUSTOM MODAL ALERT (PURE OFFLINE) -->
+<div id="customModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 id="modalTitle" style="margin-bottom:10px; color:var(--primary-dark)">تنبيه</h3>
+    <p id="modalMessage" style="font-size:0.95rem; color:var(--text); margin-bottom:20px;"></p>
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button onclick="closeCustomModal()" class="btn btn-primary">موافق</button>
+    </div>
+  </div>
+</div>
+
+<!-- BLOCKING MODAL FOR EXPIRED TRIAL -->
+<div id="lockModal" class="lock-modal">
+  <div class="modal-box" style="text-align: center; border: 2px solid var(--danger);">
+    <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+    <h2 style="color: var(--danger); margin-bottom: 10px;">انتهت الفترة التجريبية</h2>
+    <p style="font-size: 0.95rem; color: var(--text); margin-bottom: 20px; line-height: 1.6;">
+      لقد انتهت الفترة التجريبية المحددة بـ 48 ساعة لاستخدام النظام. لاستمرار العمل واستخدام جميع الخصائص، يرجى التواصل لتفعيل النسخة.
+    </p>
+
+    <div style="background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid var(--border);">
+      <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">معرف جهازك (Device ID):</span>
+      <strong id="lockDeviceId" style="font-family: monospace; font-size: 1.1rem; color: var(--primary);">...</strong>
+    </div>
+
+    <div class="form-group">
+      <input type="tel" id="lockPhone" placeholder="أدخل رقم هاتفك هنا" class="form-control" style="text-align:center;">
+    </div>
+
+    <button onclick="requestActivationCode('lockPhone')" class="btn btn-success" style="width: 100%; margin-bottom: 12px;">
+      📲 طلب كود التفعيل عبر الواتساب
+    </button>
+
+    <div class="form-group" style="margin-top: 12px;">
+      <input type="text" id="lockCode" placeholder="أدخل كود التفعيل هنا" class="form-control" style="text-align:center; font-family:monospace;">
+    </div>
+
+    <button onclick="handleActivateApp('lockCode')" class="btn btn-primary" style="width: 100%;">
+      🔑 تفعيل النظام الآن
+    </button>
+  </div>
+</div>
+
+<script>
+  // === STATE & STORAGE ===
+  let assets = JSON.parse(localStorage.getItem('pcrf_assets')) || [];
+  let custodies = JSON.parse(localStorage.getItem('pcrf_custodies')) || [];
+
+  // تنظيف البيانات التجريبية (حذف dell Latitude تلقائياً إذا كان مخزناً مسبقاً في المتصفح)
+  assets = assets.filter(a => !a.name.toLowerCase().includes('dell latitude'));
+  localStorage.setItem('pcrf_assets', JSON.stringify(assets));
+
+  function saveData() {
+    localStorage.setItem('pcrf_assets', JSON.stringify(assets));
+    localStorage.setItem('pcrf_custodies', JSON.stringify(custodies));
+  }
+
+  // === SECURE SUBSCRIPTION & CRYPTOGRAPHIC ACTIVATION SYSTEM ===
+  // المفتاح السري أدناه يجب أن يظل مخفياً عن المستخدم العادي ويستخدم لتوليد الكود المشفر
+  const SYSTEM_SECRET = "PCRF_MASTER_SECRET_KEY_2026_@SAAD_ABU_MAZEED_SECURE";
+
+  // دالة مساعدة للتشفير عبر خوارزمية SHA-256
+  async function generateHash(message) {
+    const msgUint8 = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // توليد Device ID قوي عشوائي بدلاً من math.random الضعيف
+  function generateSecureDeviceId() {
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const randomHex = Array.from(array, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+    return 'PCRF-DEV-' + randomHex;
+  }
+
+  // توليد كود التفعيل المطلوب عبر دمج الـ Device ID مع المفتاح السري وتشفيرهما
+  async function getExpectedActivationCode(devId) {
+    const rawHash = await generateHash(devId + ":" + SYSTEM_SECRET);
+    // نأخذ أجزاء من التشفير لتكوين كود تفعيل بمظهر احترافي وممكن الكتابة (مثل PCRF-A1B2-C3D4-E5F6)
+    const part1 = rawHash.substring(0, 4).toUpperCase();
+    const part2 = rawHash.substring(4, 8).toUpperCase();
+    const part3 = rawHash.substring(8, 12).toUpperCase();
+    return `PCRF-${part1}-${part2}-${part3}`;
+  }
+
+  // التحقق من صحة التفعيل ومنع تلاعب المستخدم بـ LocalStorage
+  async function isAppValidlyActivated() {
+    const devId = localStorage.getItem('pcrf_device_id');
+    if (!devId) return false;
+    
+    const savedSig = localStorage.getItem('pcrf_activation_sig');
+    if (!savedSig) return false;
+
+    // إعادة حساب التوقيع ومقارنته بالمسجل في المتصفح
+    const expectedSig = await generateHash(devId + ":" + SYSTEM_SECRET + ":ACTIVATED_TOKEN");
+    return savedSig === expectedSig;
+  }
+
+  function initSubscription() {
+    let deviceId = localStorage.getItem('pcrf_device_id');
+    if (!deviceId) {
+      deviceId = generateSecureDeviceId();
+      localStorage.setItem('pcrf_device_id', deviceId);
+    }
+
+    let firstRun = localStorage.getItem('pcrf_first_run');
+    if (!firstRun) {
+      firstRun = Date.now().toString();
+      localStorage.setItem('pcrf_first_run', firstRun);
+    }
+
+    document.getElementById('displayDeviceId').innerText = deviceId;
+    document.getElementById('lockDeviceId').innerText = deviceId;
+
+    checkActivationStatus();
+    setInterval(checkActivationStatus, 1000); 
+  }
+
+  async function checkActivationStatus() {
+    const isActivated = await isAppValidlyActivated();
+    const firstRun = parseInt(localStorage.getItem('pcrf_first_run') || Date.now());
+
+    const now = Date.now();
+    const trialDuration = 48 * 60 * 60 * 1000; 
+    const expiresAt = firstRun + trialDuration;
+    const remainingMs = expiresAt - now;
+
+    const lockModal = document.getElementById('lockModal');
+    const subStatusBadge = document.getElementById('subStatusBadge');
+    const timerBox = document.getElementById('trialTimerBox');
+
+    if (isActivated) {
+      if (lockModal) lockModal.style.display = 'none';
+      if (subStatusBadge) {
+        subStatusBadge.style.display = 'inline-block';
+        subStatusBadge.innerText = 'مفعل';
+        subStatusBadge.style.background = 'var(--accent)';
+      }
+      if (timerBox) {
+        timerBox.innerHTML = '<div style="color:var(--accent); font-weight:bold; font-size:1.1rem;">✓ التطبيق مفعل بالكامل ومحمي بالتشفير (نسخة دائمة)</div>';
+      }
+      return;
+    }
+
+    if (remainingMs <= 0) {
+      if (lockModal) lockModal.style.display = 'flex';
+      if (subStatusBadge) {
+        subStatusBadge.style.display = 'inline-block';
+        subStatusBadge.innerText = 'منتهي';
+        subStatusBadge.style.background = 'var(--danger)';
+      }
+      if (timerBox) {
+        timerBox.innerHTML = '<div style="color:var(--danger); font-weight:bold;">⚠️ انتهت الفترة التجريبية! يرجى تفعيل التطبيق للاستمرار.</div>';
+      }
+    } else {
+      if (lockModal) lockModal.style.display = 'none';
+      if (subStatusBadge) {
+        subStatusBadge.style.display = 'inline-block';
+        subStatusBadge.innerText = 'تجريبي';
+        subStatusBadge.style.background = 'var(--warning)';
+      }
+
+      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+      const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((remainingMs % (1000 * 60)) / 1000);
+
+      if (timerBox) {
+        timerBox.innerHTML = `
+          <div style="font-size:0.85rem; color:var(--text-muted); font-weight:bold;">المتبقي من الفترة التجريبية (48 ساعة):</div>
+          <div style="font-size:1.4rem; font-weight:bold; color:var(--primary); font-family:monospace; margin-top:4px;">
+            ${hours} ساعة و ${mins} دقيقة و ${secs} ثانية
+          </div>
+        `;
+      }
+    }
+  }
+
+  async function handleActivateApp(inputId) {
+    const codeVal = document.getElementById(inputId).value.trim().toUpperCase();
+    const devId = localStorage.getItem('pcrf_device_id');
+    const expectedCode = await getExpectedActivationCode(devId);
+
+    if (codeVal === expectedCode) {
+      // إذا تم تزويد التطبيق بالكود الصحيح، ننشئ توقيعاً مشفراً للحماية من التلاعب بالحفظ
+      const validSig = await generateHash(devId + ":" + SYSTEM_SECRET + ":ACTIVATED_TOKEN");
+      localStorage.setItem('pcrf_activation_sig', validSig);
+      
+      await checkActivationStatus();
+      showModal("تم التفعيل بنجاح", "تم تفعيل التطبيق بنجاح وفتح جميع الصلاحيات بشكل دائم ومؤمن.");
+    } else {
+      alert("كود التفعيل غير صحيح! يرجى التأكد من الكود المكتوب أو طلب الكود عبر الواتساب.");
+    }
+  }
+
+  function requestActivationCode(phoneInputId) {
+    const phone = document.getElementById(phoneInputId).value.trim();
+    const devId = localStorage.getItem('pcrf_device_id');
+
+    if (!phone) {
+      alert("يرجى إدخال رقم هاتفك أولاً");
+      return;
+    }
+
+    const message = `السلام عليكم دكتور سعد أبو مزيد، أود طلب كود التفعيل لنظام العُهد.\nمعرف الجهاز (Device ID): ${devId}\nرقم الهاتف: ${phone}`;
+    const whatsappUrl = `https://wa.me/970592811920?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  }
+
+  // === BARCODE SCANNER VIA CAMERA ===
+  let videoStream = null;
+  let scanInterval = null;
+
+  function playBeepSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 880; // 880Hz Audio Beep
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      gain.gain.setValueAtTime(1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.2);
+      osc.stop(ctx.currentTime + 0.2);
+    } catch(e) {}
+  }
+
+  async function openBarcodeScanner() {
+    const modal = document.getElementById('scannerModal');
+    const video = document.getElementById('barcodeVideo');
+    modal.classList.add('active');
+
+    try {
+      videoStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+      });
+      video.srcObject = videoStream;
+      video.play();
+
+      if ('BarcodeDetector' in window) {
+        const barcodeDetector = new BarcodeDetector({
+          formats: ['code_128', 'code_39', 'ean_13', 'qr_code', 'upc_a', 'upc_e', 'codabar']
+        });
+
+        scanInterval = setInterval(async () => {
+          try {
+            const barcodes = await barcodeDetector.detect(video);
+            if (barcodes.length > 0) {
+              document.getElementById('assetSerial').value = barcodes[0].rawValue;
+              playBeepSound();
+              closeBarcodeScanner();
+            }
+          } catch (e) {}
+        }, 300);
+      } else {
+        setTimeout(() => {
+          alert("تنبيه: الكاميرا تعمل، ولكن متصفحك لا يدعم الكشف التلقائي المباشر للباركود. يمكنك كتابة الرقم التسلسلي يدوياً.");
+        }, 1000);
+      }
+    } catch (err) {
+      alert("تعذر الوصول إلى الكاميرا. يرجى التأكد من سماح المتصفح بالوصول للكاميرا أو إدخال الرقم التسلسلي يدوياً.");
+      closeBarcodeScanner();
+    }
+  }
+
+  function closeBarcodeScanner() {
+    if (scanInterval) clearInterval(scanInterval);
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
+    }
+    document.getElementById('scannerModal').classList.remove('active');
+  }
+
+  // === INIT & NAVIGATION ===
+  document.addEventListener('DOMContentLoaded', () => {
+    initSubscription();
+    switchTab('dashboard');
+    document.getElementById('issueDate').valueAsDate = new Date();
+  });
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.content-body > section').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+    const targetSection = document.getElementById(`tab-${tabId}`);
+    if (targetSection) targetSection.style.display = 'block';
+
+    const activeNav = document.getElementById(`nav-${tabId}`);
+    if (activeNav) activeNav.classList.add('active');
+
+    const titles = {
+      'dashboard': 'لوحة التحكم بالإحصائيات',
+      'assets': 'تعريف الأصول والمعدات',
+      'issuance': 'إنشاء طلب تسليم عهدة',
+      'approvals': 'الاعتماد والتوقيع الورقي',
+      'tracking': 'سجل وتتبع العُهد',
+      'returns': 'الإرجاع وإخلاء الطرف',
+      'subscription': 'الاشتراك وتفعيل النظام'
+    };
+    document.getElementById('pageTitle').innerText = titles[tabId] || 'إدارة العُهد';
+
+    document.getElementById('sidebar').classList.remove('open');
+
+    renderDashboard();
+    renderAssets();
+    renderIssuanceSelect();
+    renderApprovals();
+    renderTrackingTable();
+    renderReturnsSelect();
+  }
+
+  function showModal(title, msg) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalMessage').innerText = msg;
+    document.getElementById('customModal').classList.add('active');
+  }
+
+  function closeCustomModal() {
+    document.getElementById('customModal').classList.remove('active');
+  }
+
+  // === DASHBOARD RENDER ===
+  function renderDashboard() {
+    const total = assets.length;
+    const inUse = assets.filter(a => a.status === 'قيد الاستخدام').length;
+    const avail = assets.filter(a => a.status === 'متاح').length;
+    const pending = custodies.filter(c => c.status === 'بانتظار الموافقة').length;
+
+    document.getElementById('statTotal').innerText = total;
+    document.getElementById('statInUse').innerText = inUse;
+    document.getElementById('statAvailable').innerText = avail;
+    document.getElementById('statPending').innerText = pending;
+
+    const badge = document.getElementById('pendingBadge');
+    badge.innerText = pending;
+    badge.style.display = pending > 0 ? 'inline-block' : 'none';
+
+    const tbody = document.getElementById('dashTable');
+    tbody.innerHTML = '';
+    const recent = [...custodies].reverse().slice(0, 5);
+
+    if (recent.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا توجد عُهد مسجلة</td></tr>';
+      return;
+    }
+
+    recent.forEach(c => {
+      let badgeClass = c.status === 'تم الاعتماد والتوقيع' ? 'status-inuse' : (c.status === 'بانتظار الموافقة' ? 'status-pending' : 'status-returned');
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${c.assetName}</strong></td>
+          <td>${c.empName}</td>
+          <td>${c.dept}</td>
+          <td>${c.issueDate}</td>
+          <td><span class="status-tag ${badgeClass}">${c.status}</span></td>
+        </tr>
+      `;
+    });
+  }
+
+  // === ASSETS RENDER & ACTIONS ===
+  function handleCreateAsset(e) {
+    e.preventDefault();
+    const newAsset = {
+      id: Date.now().toString(),
+      name: document.getElementById('assetName').value,
+      serial: document.getElementById('assetSerial').value,
+      model: document.getElementById('assetModel').value || 'غير محدد',
+      condition: document.getElementById('assetCondition').value,
+      value: parseFloat(document.getElementById('assetValue').value),
+      status: 'متاح'
+    };
+
+    assets.push(newAsset);
+    saveData();
+    e.target.reset();
+    renderAssets();
+    showModal("تم بنجاح", "تم تعريف الأصل وإضافته لقائمة المستودع");
+  }
+
+  function renderAssets() {
+    const tbody = document.getElementById('assetsTable');
+    tbody.innerHTML = '';
+    assets.forEach(a => {
+      let tag = a.status === 'متاح' ? 'status-available' : 'status-inuse';
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${a.name}</strong> (${a.model})</td>
+          <td style="font-family:monospace;">${a.serial}</td>
+          <td>₪${a.value}</td>
+          <td><span class="status-tag ${tag}">${a.status}</span></td>
+          <td><button type="button" onclick="deleteAsset('${a.id}')" class="btn btn-danger" style="font-size:0.75rem; padding:4px 8px; min-height:auto;">حذف</button></td>
+        </tr>
+      `;
+    });
+  }
+
+  function deleteAsset(id) {
+    const hasCustody = custodies.some(c => c.assetId === id);
+    if (hasCustody) {
+      showModal("تنبيه أمان - يمنع الحذف", "لا يمكن حذف هذا الجهاز لارتباطه بسجلات عُهد سابقة أو حالية (سواء كان بانتظار الاعتماد، قيد الاستخدام، أو تم إرجاعه).");
+      return;
+    }
+
+    if (!confirm("هل أنت تأكد من رغبتك في حذف هذا الجهاز من تعريف الأصول؟")) return;
+    if (!confirm("تأكيد ثاني: هل أنت متأكد تماماً؟ لن يمكنك التراجع عن عملية الحذف بعد إتمامها.")) return;
+    if (!confirm("تأكيد نهائي وأخير: اضغط موافق لتأكيد الحذف النهائي للجهاز من المستودع.")) return;
+
+    assets = assets.filter(a => a.id !== id);
+    saveData();
+    renderAssets();
+    renderDashboard(); 
+    showModal("تم الحذف بنجاح", "تم حذف الجهاز نهائياً من المستودع.");
+  }
+
+  // === ISSUANCE REQUEST ===
+  function renderIssuanceSelect() {
+    const sel = document.getElementById('issuanceAsset');
+    sel.innerHTML = '<option value="">-- اختر أصلاً متاحاً من المستودع --</option>';
+    assets.filter(a => a.status === 'متاح').forEach(a => {
+      sel.innerHTML += `<option value="${a.id}">${a.name} - [${a.serial}]</option>`;
+    });
+  }
+
+  function handleCreateIssuance(e) {
+    e.preventDefault();
+    const assetId = document.getElementById('issuanceAsset').value;
+    const selectedAsset = assets.find(a => a.id === assetId);
+
+    if (!selectedAsset) return;
+
+    const newCustody = {
+      id: 'CUST-' + Date.now(),
+      assetId: selectedAsset.id,
+      assetName: selectedAsset.name,
+      serial: selectedAsset.serial,
+      empName: document.getElementById('empName').value,
+      empId: document.getElementById('empId').value || 'غير محدد',
+      dept: document.getElementById('empDept').value,
+      location: document.getElementById('useLocation').value,
+      issueDate: document.getElementById('issueDate').value,
+      notes: document.getElementById('issueNotes').value,
+      status: 'بانتظار الموافقة',
+      sigType: 'بانتظار التوقيع الورقي'
+    };
+
+    custodies.push(newCustody);
+    saveData();
+    e.target.reset();
+    showModal("تم حفظ الطلب", "تم تحويل الطلب إلى قسم الاعتماد والطباعة الورقية");
+    switchTab('approvals');
+  }
+
+  // === APPROVALS & PAPER PRINT ===
+  function renderApprovals() {
+    const tbody = document.getElementById('approvalsTable');
+    tbody.innerHTML = '';
+    const pending = custodies.filter(c => c.status === 'بانتظار الموافقة');
+
+    if (pending.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">لا توجد طلبات معلقة بانتظار الاعتماد والتوقيع</td></tr>';
+      return;
+    }
+
+    pending.forEach(c => {
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${c.assetName}</strong></td>
+          <td>${c.empName} ${c.empId !== 'غير محدد' ? '(' + c.empId + ')' : ''}</td>
+          <td>${c.dept}</td>
+          <td>${c.issueDate}</td>
+          <td style="display:flex; gap:8px;">
+            <button onclick="printHandoverForm('${c.id}')" class="btn btn-primary" style="font-size:0.75rem; padding:6px 10px; min-height:auto;">
+              🖨️ طباعة نموذج التسليم
+            </button>
+            <button onclick="confirmPaperSignature('${c.id}')" class="btn btn-success" style="font-size:0.75rem; padding:6px 10px; min-height:auto;">
+              ✓ تأكيد الاعتماد (تم التوقيع يدويًا)
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  function printHandoverForm(custodyId) {
+    const c = custodies.find(item => item.id === custodyId);
+    if (!c) return;
+
+    const pContainer = document.getElementById('printableArea');
+    pContainer.innerHTML = `
+      <div class="print-header">
+        <h2>جمعية إغاثة أطفال فلسطين (PCRF)</h2>
+        <h3>Palestine Children's Relief Fund</h3>
+        <p style="margin-top:5px; font-weight:bold;">نموذج إقرار وتعهد استلام عُهدة ممتلكات</p>
+      </div>
+
+      <div style="margin-bottom: 20px; font-size:11pt;">
+        <p><strong>تاريخ الطلب والتسليم:</strong> ${c.issueDate}</p>
+        <p><strong>الرقم المرجعي للعهدية:</strong> ${c.id}</p>
+      </div>
+
+      <h4>أولاً: بيانات الموظف المستلم:</h4>
+      <table class="print-table">
+        <tr>
+          <td><strong>اسم الموظف:</strong> ${c.empName}</td>
+          <td><strong>الرقم الوظيفي:</strong> ${c.empId}</td>
+        </tr>
+        <tr>
+          <td><strong>القسم / المشروع:</strong> ${c.dept}</td>
+          <td><strong>مكان/موقع الاستخدام:</strong> ${c.location}</td>
+        </tr>
+      </table>
+
+      <h4>ثانياً: تفاصيل الأصل والعهدة:</h4>
+      <table class="print-table">
+        <tr>
+          <th>اسم الأصل / الجهاز</th>
+          <th>الرقم التسلسلي (S/N)</th>
+          <th>الملحقات والملاحظات</th>
+        </tr>
+        <tr>
+          <td>${c.assetName}</td>
+          <td>${c.serial}</td>
+          <td>${c.notes || 'لا يوجد'}</td>
+        </tr>
+      </table>
+
+      <h4>ثالثاً: الإقرار والتعهد القانوني:</h4>
+      <p style="font-size:10pt; line-height:1.6; text-align:justify;">
+        أقر أنا الموظف المذكور أعلاه بأنني قد استلمت الأصل/الأجهزة الموضحة بعاليه بحالة جيدة وصالحة للاستعمال، وأتعهد بالمحافظة عليها واستعمالها في أغراض العمل الخاصة بـ <strong>جمعية إغاثة أطفال فلسطين (PCRF)</strong> فقط. كما أتعهد بإرجاعها فور طلب الجمعية أو عند إنهاء خدمتي بالجمعية.
+      </p>
+
+      <div class="sig-box-container">
+        <div class="sig-box">
+          <p><strong>توقيع الموظف المستلم</strong></p>
+          <p style="margin-top:20px;">التوقيع: ____________________</p>
+          <div class="fingerprint-box">
+            <span style="font-size:8pt; color:#666;">بصمة الإبهام</span>
+          </div>
+        </div>
+
+        <div class="sig-box">
+          <p><strong>اعتماد مسؤول المستودع / الممتلكات</strong></p>
+          <p style="margin-top:30px;">الاسم: ____________________</p>
+          <p style="margin-top:20px;">التوقيع والختم: ________________</p>
+        </div>
+      </div>
+    `;
+
+    window.print();
+  }
+
+  function confirmPaperSignature(custodyId) {
+    if (confirm("هل تؤكد أنه تم طباعة النموذج وتوقيعه ورقيًا وبصمه من قبل الموظف المستلم؟")) {
+      const c = custodies.find(item => item.id === custodyId);
+      if (!c) return;
+
+      c.status = 'تم الاعتماد والتوقيع';
+      c.sigType = 'توقيع ورقي معتمد';
+
+      const asset = assets.find(a => a.id === c.assetId);
+      if (asset) asset.status = 'قيد الاستخدام';
+
+      saveData();
+      showModal("تم الاعتماد", "تم تغيير حالة العهدة إلى (تم الاعتماد والتوقيع) وحالة الأصل إلى (قيد الاستخدام).");
+      renderApprovals();
+      renderDashboard();
+    }
+  }
+
+  // === TRACKING TABLE ===
+  function renderTrackingTable() {
+    const tbody = document.getElementById('trackingTable');
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const filter = document.getElementById('statusFilter').value;
+
+    tbody.innerHTML = '';
+
+    let list = custodies.filter(c => {
+      const matchSearch = c.assetName.toLowerCase().includes(search) ||
+                          c.empName.toLowerCase().includes(search) ||
+                          c.serial.toLowerCase().includes(search);
+      const matchStatus = filter === 'all' || c.status === filter;
+      return matchSearch && matchStatus;
+    });
+
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">لا توجد سجلات مطابقة للبحث</td></tr>';
+      return;
+    }
+
+    list.forEach(c => {
+      let badgeClass = c.status === 'تم الاعتماد والتوقيع' ? 'status-inuse' : (c.status === 'تم الإرجاع' ? 'status-returned' : 'status-pending');
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${c.assetName}</strong></td>
+          <td style="font-family:monospace;">${c.serial}</td>
+          <td>${c.empName}</td>
+          <td>${c.dept}</td>
+          <td>${c.issueDate}</td>
+          <td><span class="status-tag ${badgeClass}">${c.status}</span></td>
+          <td><strong style="color:var(--accent); font-size:0.8rem;">📄 ${c.sigType}</strong></td>
+        </tr>
+      `;
+    });
+  }
+
+  // === RETURNS & CLEARANCE ===
+  function renderReturnsSelect() {
+    const sel = document.getElementById('returnCustodySelect');
+    sel.innerHTML = '<option value="">-- اختر العهدة المراد إرجاعها --</option>';
+
+    const activeList = custodies.filter(c => c.status === 'تم الاعتماد والتوقيع');
+    activeList.forEach(c => {
+      sel.innerHTML += `<option value="${c.id}">${c.assetName} - المستلم: ${c.empName} [${c.serial}]</option>`;
+    });
+  }
+
+  function handleReturnSubmit(e) {
+    e.preventDefault();
+    const custodyId = document.getElementById('returnCustodySelect').value;
+    const c = custodies.find(item => item.id === custodyId);
+
+    if (!c) return;
+
+    const cond = document.getElementById('returnCondition').value;
+    const notes = document.getElementById('returnNotes').value;
+
+    c.status = 'تم الإرجاع';
+    c.returnDate = new Date().toISOString().split('T')[0];
+    c.returnCondition = cond;
+
+    const asset = assets.find(a => a.id === c.assetId);
+    if (asset) asset.status = 'متاح';
+
+    saveData();
+    e.target.reset();
+
+    printClearanceCertificate(c, cond, notes);
+
+    showModal("تم الإرجاع", "تم تسجيل إرجاع العهدة وإصدار شهادة إخلاء الطرف بنجاح");
+    switchTab('tracking');
+  }
+
+  function printClearanceCertificate(c, cond, notes) {
+    const pContainer = document.getElementById('printableArea');
+    pContainer.innerHTML = `
+      <div class="print-header">
+        <h2>جمعية إغاثة أطفال فلسطين (PCRF)</h2>
+        <h3>شهادة إخلاء طرف عُهدة</h3>
+      </div>
+
+      <div style="margin-bottom:20px; font-size:11pt;">
+        <p><strong>تاريخ الإخلاء:</strong> ${c.returnDate}</p>
+        <p><strong>رقم الشهادة:</strong> CLR-${Math.floor(1000 + Math.random()*9000)}</p>
+      </div>
+
+      <p style="font-size:11pt; line-height:1.8; margin-bottom:20px;">
+        تشهد إدارة المستودعات والممتلكات بـ <strong>جمعية إغاثة أطفال فلسطين (PCRF)</strong> بأن الموظف/ة <strong>${c.empName}</strong> (رقم وظيفي: ${c.empId}) التابع لقسم <strong>${c.dept}</strong> قد قام بإعادة العهدة المسجلة بحوزته تفاصيلها أدناه وتم فحصها واستلامها رسمياً:
+      </p>
+
+      <table class="print-table">
+        <tr>
+          <th>اسم الأصل</th>
+          <th>الرقم التسلسلي</th>
+          <th>حالة الاستلام</th>
+          <th>ملاحظات الفحص</th>
+        </tr>
+        <tr>
+          <td>${c.assetName}</td>
+          <td>${c.serial}</td>
+          <td>${cond}</td>
+          <td>${notes || 'لا يوجد'}</td>
+        </tr>
+      </table>
+
+      <p style="margin-top:20px; font-weight:bold; color:#16a34a;">
+        بناءً عليه، تُبرأ ذمة الموظف المذكور أعلاه من العهدة الموضحة فقط.
+      </p>
+
+      <div class="sig-box-container">
+        <div class="sig-box" style="width:100%;">
+          <p><strong>اعتماد أمين المستودع / قسم الممتلكات (PCRF)</strong></p>
+          <p style="margin-top:20px;">حالة الاعتماد والتوقيع: <strong>توقيع ورقي معتمد وموثق بالسجلات</strong></p>
+          <p style="margin-top:20px;">التوقيع والختم الرسمي: ____________________</p>
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => { window.print(); }, 500);
+  }
+</script>
+
+</body>
+</html>
